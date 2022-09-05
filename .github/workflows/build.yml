@@ -1,0 +1,41 @@
+name: Build bsnes+
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        target: [x86_64-apple-darwin, aarch64-apple-darwin]
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: update homebrew
+      run: brew update
+    - name: install qt@5
+      run: brew install qt@5
+    - name: add qt@5/bin to PATH
+      run: echo '/usr/local/opt/qt@5/bin' >> $GITHUB_PATH
+    - name: print clang version
+      run: clang -v
+    - name: print clang targets
+      run: clang -print-targets
+    - name: print ld version
+      run: ld -v
+    # - name: make
+    #   run: make
+    #   working-directory: bsnes
+    #   env:
+    #     target: ${{ matrix.target }}
+    #     qtpath: /usr/local/opt/qt@5
+    #     PKG_CONFIG_PATH: /usr/local/opt/qt@5/lib/pkgconfig
+    #     LDFLAGS: -L/usr/local/opt/qt@5/lib
+    #     CPPFLAGS: -I/usr/local/opt/qt@5/include
